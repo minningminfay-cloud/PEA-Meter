@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#7b2fb6">
+  <title>โปรแกรมคำนวณการใช้ไฟฟ้า</title>
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+ <style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+body{
+  font-family: 'Kanit', sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(213, 171, 1, 0.192), transparent 25%),
+    radial-gradient(circle at bottom right, rgba(168,85,247,0.15), transparent 25%),
+    linear-gradient(135deg,#300746,#4b0b7c,#7b2fb6);
+  min-height:100vh;
+  padding:40px 20px;
+  color:#fff;
+  overflow-x:hidden;
+}
+.container{
+  max-width:1150px;
+  margin:auto;
+  padding:40px;
+  border-radius:32px;
+  background: rgba(255,255,255,0.07);
+  backdrop-filter: blur(18px);
+  border:1px solid rgba(255,255,255,0.12);
+  box-shadow:
+    0 10px 40px rgba(0,0,0,0.35),
+    inset 0 1px 1px rgba(255,255,255,0.08);
+}
+h1{
+  text-align:center;
+  font-size:38px;
+  font-weight:700;
+  line-height:1.5;
+  margin-bottom:40px;
+  background: linear-gradient(135deg,#fde68a,#facc15,#fff7ed);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  letter-spacing:1px;
+}
+.month-wrapper{
+  display:grid;
+  grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
+  gap:24px;
+}
+.month-card{
+  position:relative;
+  background: rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:28px;
+  padding:28px;
+  transition:0.35s ease;
+  overflow:hidden;
+}
+.month-card::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background: linear-gradient(
+    135deg,
+    rgba(250,204,21,0.08),
+    transparent 40%
+  );
+  pointer-events:none;
+}
+.month-card:hover{
+  transform:translateY(-8px);
+  border:1px solid rgba(250,204,21,0.3);
+  box-shadow:
+    0 15px 35px rgba(0,0,0,0.25),
+    0 0 25px rgba(250,204,21,0.08);
+}
+.month-title{
+  text-align:center;
+  margin-bottom:24px;
+  color:#facc15;
+  font-size:24px;
+  font-weight:600;
+  letter-spacing:0.5px;
+}
+.form-group{
+  margin-bottom:20px;
+}
+label{
+  display:block;
+  margin-bottom:10px;
+  color:#f5f3ff;
+  font-size:15px;
+  font-weight:400;
+}
+input{
+  width:100%;
+  padding:16px 18px;
+  border:none;
+  border-radius:18px;
+  background: rgba(255,255,255,0.95);
+  font-size:16px;
+  font-family:'Kanit',sans-serif;
+  color:#2e1065;
+  outline:none;
+  transition:0.25s;
+}
+input:focus{
+  transform:scale(1.01);
+  box-shadow:
+    0 0 0 3px rgba(250,204,21,0.35),
+    0 8px 20px rgba(0,0,0,0.1);
+}
+.current-box{
+  margin-top:28px;
+  padding:28px;
+  border-radius:28px;
+  background: rgba(255,255,255,0.07);
+  border:1px solid rgba(255,255,255,0.1);
+}
+.button-group{
+  display:flex;
+  gap:18px;
+  margin-top:35px;
+  flex-wrap:wrap;
+}
+button{
+  flex:1;
+  padding:18px;
+  border:none;
+  border-radius:20px;
+  font-size:18px;
+  font-family:'Kanit',sans-serif;
+  font-weight:600;
+  cursor:pointer;
+  transition:0.3s ease;
+}
+.calculate-btn{
+  background: linear-gradient(
+    135deg,
+    #fde68a,
+    #facc15
+  );
+  color:#3b0764;
+  box-shadow:
+    0 10px 25px rgba(250,204,21,0.25);
+}
+.calculate-btn:hover{
+  transform:translateY(-3px);
+  box-shadow:
+    0 15px 30px rgba(250,204,21,0.4);
+}
+.reset-btn{
+  background: rgba(255,255,255,0.08);
+  color:white;
+  border:1px solid rgba(255,255,255,0.15);
+}
+.reset-btn:hover{
+  background: rgba(255,255,255,0.16);
+
+  transform:translateY(-3px);
+}
+.result{
+  margin-top:40px;
+  display:none;
+  border-radius:30px;
+  padding:35px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,248,220,0.98),
+      rgba(255,255,255,0.95)
+    );
+  animation:fadeIn 0.45s ease;
+  color:#3b0764;
+  box-shadow:
+    0 15px 40px rgba(0,0,0,0.2);
+}
+.result h2{
+  font-size:30px;
+  margin-bottom:25px;
+  color:#581c87;
+  letter-spacing:0.5px;
+}
+.result-box{
+  background:white;
+  padding:28px;
+  border-radius:24px;
+  box-shadow:
+    0 10px 25px rgba(0,0,0,0.08);
+}
+.result p{
+  font-size:20px;
+  margin:18px 0;
+  color:#4c1d95;
+}
+.highlight{
+  font-size:34px;
+  font-weight:700;
+  line-height:1.5;
+  background: linear-gradient(
+    135deg,
+    #b45309,
+    #f59e0b
+  );
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.note{
+  margin-top:35px;
+  padding:24px;
+  border-radius:24px;
+  background: rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.08);
+  line-height:1.9;
+  color:#e9d5ff;
+  font-size:15px;
+}
+@keyframes fadeIn{
+  from{
+    opacity:0;
+    transform:translateY(15px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+@media(max-width:768px){
+  body{
+    padding:25px 14px;
+  }
+  .container{
+    padding:25px;
+  }
+  h1{
+    font-size:28px;
+  }
+  .highlight{
+    font-size:26px;
+  }
+  .result p{
+    font-size:18px;
+  }
+}
+.rate-btn{
+  background:linear-gradient(135deg,#7c3aed,#a855f7);
+  color:white;
+  box-shadow:0 10px 25px rgba(168,85,247,0.3);
+}
+.rate-btn:hover{
+  transform:translateY(-3px);
+  box-shadow:0 15px 30px rgba(168,85,247,0.45);
+}
+.result table tr:nth-child(even){
+  background:#f8fafc;
+}
+.result table tr{
+  border-bottom:1px solid #e5e7eb;
+}
+.result table td:last-child{
+  font-weight:700;
+  color:#7c3aed;
+}
+.summary-card{
+  margin-top:20px;
+}
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1>โปรแกรมคำนวณการใช้ไฟฟ้า</h1>
+
+    <div class="month-wrapper">
+      <div class="month-card">
+        <div class="month-title">กรอกข้อมูล</div>
+
+        <div class="form-group">
+          <label>ค่าที่วัดได้ (A)</label>
+          <input type="number" id="measuredValue" placeholder="เช่น 15">
+        </div>
+        <div class="form-group">
+          <label>จำนวนวัน</label>
+          <input type="number" id="days" placeholder="เช่น 30">
+        </div>
+      </div>
+    </div>
+    <div class="button-group">
+      <button class="calculate-btn" onclick="calculatePower()">
+        คำนวณ
+      </button>
+
+      <button class="reset-btn" onclick="resetForm()">
+        รีเซ็ตข้อมูล
+      </button>
+    </div>
+    <div class="result" id="resultBox">
+  <h2>ผลการคำนวณ</h2>
+  <div class="result-box">
+    <table style="width:100%; border-collapse:collapse;">
+      <tr>
+        <td style="padding:12px;font-weight:600;">ค่าที่วัดได้</td>
+        <td style="padding:12px;text-align:right;" id="showAmp"></td>
+      </tr>
+      <tr>
+        <td style="padding:12px;font-weight:600;">กำลังไฟฟ้า</td>
+        <td style="padding:12px;text-align:right;" id="showKW"></td>
+      </tr>
+      <tr>
+        <td style="padding:12px;font-weight:600;">พลังงานต่อวัน</td>
+        <td style="padding:12px;text-align:right;" id="showDaily"></td>
+      </tr>
+      <tr>
+        <td style="padding:12px;font-weight:600;">พลังงานต่อเดือน</td>
+        <td style="padding:12px;text-align:right;" id="showMonthly"></td>
+      </tr>
+    </table>
+    <hr style="margin:25px 0; border:1px solid #ddd;">
+    <div class="highlight" id="summaryResult"></div>
+  </div>
+</div>
+    <div class="note">
+      สูตรคำนวณ<br>
+      กิโลวัตต์ = (230 × ค่าที่วัดได้ × 0.8) ÷ 1000<br>
+      หน่วยต่อวัน = กิโลวัตต์ × 24<br>
+      หน่วยต่อเดือน = หน่วยต่อวัน × จำนวนวัน
+    </div>
+    <div class="button-group">
+      <button class="rate-btn" onclick="window.location.href='rate1115.html'">
+        อัตรา 1115
+      </button>
+      <button class="rate-btn" onclick="window.location.href='rate1125.html'">
+        อัตรา 1125
+      </button>
+      <button class="rate-btn" onclick="window.location.href='rate2125.html'">
+        อัตรา 2125
+      </button>
+      <button class="rate-btn" onclick="window.location.href='rate8115.html'">
+        อัตรา 8115
+      </button>
+    </div>
+  </div>
+  <script>
+function calculatePower() {
+  const measured =
+    parseFloat(document.getElementById('measuredValue').value);
+  const days =
+    parseFloat(document.getElementById('days').value);
+  if (!measured || !days) {
+    alert("กรุณากรอกข้อมูลให้ครบ");
+    return;
+  }
+  const kw = (230 * measured * 0.8) / 1000;
+  const dailyUnit = kw * 24;
+  const monthlyUnit = dailyUnit * days;
+  document.getElementById('showAmp').innerHTML =
+    `${measured.toFixed(2)} A`;
+  document.getElementById('showKW').innerHTML =
+    `${kw.toFixed(3)} kW`;
+  document.getElementById('showDaily').innerHTML =
+    `${dailyUnit.toFixed(2)} kWh/วัน`;
+  document.getElementById('showMonthly').innerHTML =
+    `${monthlyUnit.toFixed(2)} kWh`;
+  document.getElementById('summaryResult').innerHTML =
+    `ใช้พลังงานประมาณ ${monthlyUnit.toLocaleString('en-US',{
+      minimumFractionDigits:2,
+      maximumFractionDigits:2
+    })} หน่วย ต่อ ${days} วัน`;
+  document.getElementById('resultBox').style.display = 'block';
+}
+  </script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./service-worker.js')
+        .then(() => {
+          console.log('Service Worker Registered');
+        })
+        .catch(err => {
+          console.log('Service Worker Error:', err);
+        });
+    }
+  </script>
+</body>
+</html>
