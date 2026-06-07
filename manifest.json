@@ -1,6 +1,6 @@
 {
-  "name": "PEA Meter Calculator",
-  "short_name": "PEA Meter",
+  "name": "EBC Electricity Bill Calculator",
+  "short_name": "EBC",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#300746",
